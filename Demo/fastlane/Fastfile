@@ -1,5 +1,5 @@
 
-import_from_git(url:'https://github.com/caixiang305621856/sendEmail.git',branch:'master',path:"fastlane/ios_fastfile.rb")
+import_from_git(url:'https://github.com/caixiang305621856/CXSendEmail.git',branch:'master',path:"fastlane/ios_fastfile.rb")
 
 platform :ios do
   #发送邮件的lane
