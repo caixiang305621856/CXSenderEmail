@@ -1,0 +1,68 @@
+
+import_from_git(url:'https://github.com/caixiang305621856/sendEmail.git',branch:'master',path:"fastlane/ios_fastfile.rb")
+
+platform :ios do
+  #发送邮件的lane
+  desc "sendEmail to others"
+  lane :send do
+    send_email(stmp_server:"smtp.sina.com",user_name:"yanyan305621856@sina.com",password:"",recipients:["616704162@qq.com","caix@mail.open.com.cn"],subject:"邮件主题",message_body:"邮件内容")
+  end
+
+  
+  desc "Push a new release build to the Ad Hoc"
+  lane :release_adhoc do |option|
+    # cocoapods
+    #根据传入参数version设置app的版本号
+  # increment_version_number(version_number: option[:version]) 
+  #自动增加build号
+  #increment_build_number
+    update_project_provisioning(
+        # 之前有sigh下载的描述文件存储路径
+        profile:"fastlane/provision/ADFace2Student.mobileprovision",
+        # 打包配置，Debug，Release
+        build_configuration:"Release"
+    )
+    automatic_code_signing(
+        # 工程文件所在路径
+        path:"FaceTraningForStudent.xcodeproj",
+        # 是否使用自动签名，这里如果是打包的话应该一般都为false吧，默认也是false
+        use_automatic_signing:false,
+        # 打包的team ID， 也就是打包使用的证书中的team ID，这个如果不知道是什么的话可以在xCode中设置好签名用的描述文件后到xcodeproj下的pbxproj文件中搜索“DEVELOPMENT_TEAM”，它的值就是了
+        team_id:"SAD9GVSU92",
+        # 这个就不用说了，需要修改的targets
+        targets:"FaceTraningForStudent",
+        # 用哪种方式打包“iPhone Develop”还是“iPhone Distribution”
+        code_sign_identity:"iPhone Distribution",
+        # 描述文件名称， 也就是使用哪个描述文件打包
+        profile_name:"ADFace2Student"
+    )
+    #证书签名
+    # sigh
+    #编译打包
+    scheme_name = 'FaceTraningForStudent'
+    configuration = 'Release'
+    version = get_info_plist_value(path: "./#{scheme_name}/Infos.plist", key: "CFBundleShortVersionString")
+    build = get_info_plist_value(path: "./#{scheme_name}/Infos.plist", key: "CFBundleVersion")
+    output_directory = File.expand_path("..", Dir.pwd) + File::Separator + 'build'
+    output_name = "#{scheme_name}_#{configuration}_#{version}_#{build}_#{Time.now.strftime('%Y%m%d%H%M%S')}.ipa"
+    gym(
+      scheme: scheme_name, 
+      clean: true, 
+      silent:true,
+      export_method:'ad-hoc', 
+      export_options: {
+          provisioningProfiles: { 
+          #前面的是bundle id，后面的是对应用到的mobileprovision，只需要名字，不需要后缀
+          "com.open.face2stu" => "ADFace2Student"
+          }
+      },
+        configuration: configuration, 
+        output_directory: output_directory, 
+        output_name: output_name, 
+        # 签名证书的名称，去钥匙串-登录-证书里面复制
+        codesigning_identity:'iPhone Distribution: National Center For Open & Distance Education Limited Company (SAD9GVSU92)',
+        export_xcargs: '-allowProvisioningUpdates')
+        # 上传到蒲公英，需要安装pgyer插件
+        #pgyer(api_key: "aaaa", user_key: "bbbb")
+  end
+end
