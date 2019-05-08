@@ -2,7 +2,8 @@
 default_platform :ios
 
 platform :ios do
-  desc '发送邮件'
+  desc 'Lane compilations'
+  #发邮件
   lane :send_email do |options|
       stmp_server = options[:stmp_server]
       user_name = options[:user_name]
@@ -17,6 +18,14 @@ platform :ios do
                recipients: recipients,
                subject:subject,
                message_body:message_body
+               )
+  end
+
+  #删除远程标签 本地标签
+  lane :remove_tag do |options|
+      tagName = options[:tag]
+      remove_tag(
+               tag:tagName
                )
   end
 
