@@ -19,4 +19,17 @@ platform :ios do
   end
  end
 ```
+
+```ruby
+import_from_git(url:'https://github.com/caixiang305621856/CXSenderEmail
+.git',branch:'master',path:"fastlane/ios_fastfile.rb")
+platform :ios do
+  desc "remove tag"
+  lane :remove do
+    remove_tag(
+    tag:"名称 eg:0.1.0"
+    )
+  end
+ end
+```
 There are also two other actions that remove remote and local tags and post them to the app to the dandelion
