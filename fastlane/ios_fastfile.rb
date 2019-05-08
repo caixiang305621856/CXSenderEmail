@@ -22,7 +22,7 @@ platform :ios do
   end
 
   #删除远程标签 本地标签
-  lane :remove_tag do |options|
+  lane :cxremove_tag do |options|
       tagName = options[:tag]
       remove_tag(
                tag:tagName
